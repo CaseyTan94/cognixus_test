@@ -17,11 +17,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
+from todo_list.views import GitHubLogin
+from allauth.socialaccount.providers.github import views as github_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('api/v1/todo/',include("todo_list.urls")),
+
+    path('auth/', include('dj_rest_auth.urls')),
+    path('auth/github/', GitHubLogin.as_view()),
+    path('auth/github/callback/', GitHubLogin.github_callback, name='github_callback'),
+    path('auth/github/url/', github_views.oauth2_login),
+    path('todo/', include("todo_list.urls")),
+
     path('', TemplateView.as_view(template_name="index.html")),
     path('logout', LogoutView.as_view()),
 ]
